@@ -1,0 +1,25 @@
+TITLE:
+Estimates for Power Analysis
+DATA:
+FILE = "power_fa_d6cca071f98372ccc163ad43843420e2.dat";
+ 
+VARIABLE:
+NAMES = FA1 FA2 FA3 dstrat2 dstrat3 dstrat4 dcond; 
+ MISSING=.;
+ 
+ANALYSIS:
+ESTIMATOR = ML;!ESTIMATOR = BAYES; ALGORITHM=GIBBS(RW); BITER = 100000 (20000);
+MODEL:
+
+  [FA1 - FA3@0]; ! fix residual intercepts to 0
+  FA1*30 FA2*30 FA3*30 ;!(resvar); ! homogenous residual variances
+  int BY FA1@1 FA2@1 FA3@1;
+  slope BY FA1@0 FA2*0.5 FA3@1;
+  int ON dstrat2 dstrat3 dstrat4 dcond@0 (i1 - i4);
+  slope ON dcond (s4);
+  [int* slope*] (rm1 - rm2);
+  int*30 slope*19 (rv1-rv2);
+  int WITH slope*0;
+
+OUTPUT:
+STDYX;

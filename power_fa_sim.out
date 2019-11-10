@@ -1,0 +1,933 @@
+Mplus VERSION 8.3
+MUTHEN & MUTHEN
+11/10/2019   5:35 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE:
+  SleepCare FA Power;
+  MONTECARLO:
+
+  NAMES ARE Y1 Y2 Y3 dstrat2 dstrat3 dstrat4 blt cbt bxc;
+  NOBSERVATIONS = 300%;
+  NREPS = 200;
+  SEED = 58459;
+  PATMISS = Y1(0) Y2(0.25) Y3(0.35);
+  PATPROBS = 1;
+  CUTPOINTS = dstrat2 (2.197) dstrat3 (0.201) dstrat4 (0.847)
+   blt (0) cbt(0) bxc (1.098612);
+  RESULTS = sleepcare_sim_estimate.dat;
+
+  MODEL POPULATION:
+
+  [Y1@0 Y2@0 Y3@0];
+  Y1 - Y3@26.4;
+  dstrat2-bxc@1;
+
+  int BY Y1@1 Y2@1 Y3@1;
+  slope BY Y1@0 Y2@0.5 Y3@1;
+
+  int ON
+    dstrat2@1.5 dstrat3@9 dstrat4@7.5
+    blt@0 cbt@0 bxc@0 ;
+  slope ON blt@-4 cbt@-4 bxc@4 ;
+  [int@52.2 slope@-0.2];
+  int@34.4 slope@24.3;
+  int WITH slope@-6.5;
+
+  ANALYSIS:
+  ESTIMATOR = ML;
+  MODEL:
+
+  [Y1 - Y3@0]; ! fix residual intercepts to 0
+  Y1-Y3*26.4 (resvar); ! homogenous residual variances
+  int BY Y1@1 Y2@1 Y3@1;
+  slope BY Y1@0 Y2@0.5 Y3@1;
+  int ON
+    dstrat2*1.5 dstrat3*9 dstrat4*7.5
+    blt@0 cbt@0 bxc@0 ;
+  slope ON blt*-4 cbt*-4 bxc*4 (s1-s3);
+  [int*52.2 slope*-0.2] (int1-int2);
+  int*34.4 slope*24.3;
+  int WITH slope*-6.5;
+
+  MODEL CONSTRAINT:
+
+  NEW(ss1 ss2 ss3 ss4 mblt mcbt);
+  ss1 = int2;
+  ss2 = ss1 + s1;
+  ss3 = ss1 + s2;
+  ss4 = ss1 + s3;
+  mblt = s1 + (s3/2);
+  mcbt = s2 + (s3/2);
+
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+
+SleepCare FA Power;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         300
+
+Number of replications
+    Requested                                                  200
+    Completed                                                  200
+Value of seed                                                58459
+
+Number of dependent variables                                    3
+Number of independent variables                                  6
+Number of continuous latent variables                            2
+
+Observed dependent variables
+
+  Continuous
+   Y1          Y2          Y3
+
+Observed independent variables
+   DSTRAT2     DSTRAT3     DSTRAT4     BLT         CBT         BXC
+
+Continuous latent variables
+   INT         SLOPE
+
+
+Estimator                                                       ML
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+
+SUMMARY OF DATA FOR THE FIRST REPLICATION
+
+     Number of missing data patterns             4
+
+
+SUMMARY OF MISSING DATA PATTERNS FOR THE FIRST REPLICATION
+
+
+     MISSING DATA PATTERNS (x = not missing)
+
+           1  2  3  4
+ Y1        x  x  x  x
+ Y2        x  x
+ Y3        x     x
+ DSTRAT2   x  x  x  x
+ DSTRAT3   x  x  x  x
+ DSTRAT4   x  x  x  x
+ BLT       x  x  x  x
+ CBT       x  x  x  x
+ BXC       x  x  x  x
+
+
+     MISSING DATA PATTERN FREQUENCIES
+
+    Pattern   Frequency     Pattern   Frequency     Pattern   Frequency
+          1         144           3          47
+          2          83           4          26
+
+
+COVARIANCE COVERAGE OF DATA FOR THE FIRST REPLICATION
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              Y1            Y2            Y3            DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+ Y1             1.000
+ Y2             0.757         0.757
+ Y3             0.637         0.480         0.637
+ DSTRAT2        1.000         0.757         0.637         1.000
+ DSTRAT3        1.000         0.757         0.637         1.000         1.000
+ DSTRAT4        1.000         0.757         0.637         1.000         1.000
+ BLT            1.000         0.757         0.637         1.000         1.000
+ CBT            1.000         0.757         0.637         1.000         1.000
+ BXC            1.000         0.757         0.637         1.000         1.000
+
+
+           Covariance Coverage
+              DSTRAT4       BLT           CBT           BXC
+              ________      ________      ________      ________
+ DSTRAT4        1.000
+ BLT            1.000         1.000
+ CBT            1.000         1.000         1.000
+ BXC            1.000         1.000         1.000         1.000
+
+
+
+SAMPLE STATISTICS FOR THE FIRST REPLICATION
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              Y1            Y2            Y3            DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+               57.295        55.359        54.309         0.013         0.400
+
+
+           Means
+              DSTRAT4       BLT           CBT           BXC
+              ________      ________      ________      ________
+                0.223         0.467         0.500         0.127
+
+
+           Covariances
+              Y1            Y2            Y3            DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+ Y1            81.414
+ Y2            61.289       104.175
+ Y3            50.055        73.008        98.971
+ DSTRAT2        0.084         0.121         0.085         0.013
+ DSTRAT3        2.377         2.696         2.224         0.005         0.240
+ DSTRAT4        1.083         1.171         1.351        -0.003         0.011
+ BLT            0.329        -0.480        -0.439         0.007         0.017
+ CBT           -0.194        -0.706        -0.949         0.000        -0.017
+ BXC            0.084         0.479         0.264        -0.002         0.009
+
+
+           Covariances
+              DSTRAT4       BLT           CBT           BXC
+              ________      ________      ________      ________
+ DSTRAT4        0.173
+ BLT            0.006         0.249
+ CBT           -0.018         0.000         0.250
+ BXC            0.012         0.024        -0.007         0.111
+
+
+           Correlations
+              Y1            Y2            Y3            DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+ Y1             1.000
+ Y2             0.666         1.000
+ Y3             0.558         0.719         1.000
+ DSTRAT2        0.081         0.103         0.075         1.000
+ DSTRAT3        0.538         0.539         0.456         0.083         1.000
+ DSTRAT4        0.288         0.276         0.326        -0.062         0.052
+ BLT            0.073        -0.094        -0.088         0.124         0.068
+ CBT           -0.043        -0.138        -0.191         0.000        -0.068
+ BXC            0.028         0.141         0.080        -0.044         0.057
+
+
+           Correlations
+              DSTRAT4       BLT           CBT           BXC
+              ________      ________      ________      ________
+ DSTRAT4        1.000
+ BLT            0.028         1.000
+ CBT           -0.088         0.000         1.000
+ BXC            0.085         0.146        -0.040         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -3082.335
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       12
+
+Loglikelihood
+
+    H0 Value
+
+        Mean                             -2439.238
+        Std Dev                             41.565
+        Number of successful computations      200
+
+             Proportions                   Percentiles
+        Expected    Observed         Expected       Observed
+           0.990       0.995        -2535.930      -2528.220
+           0.980       0.985        -2524.600      -2517.703
+           0.950       0.960        -2507.608      -2502.695
+           0.900       0.920        -2492.507      -2491.851
+           0.800       0.800        -2474.219      -2474.400
+           0.700       0.675        -2461.035      -2464.234
+           0.500       0.465        -2439.238      -2443.332
+           0.300       0.285        -2417.441      -2418.962
+           0.200       0.180        -2404.257      -2406.225
+           0.100       0.105        -2385.968      -2385.452
+           0.050       0.065        -2370.868      -2362.398
+           0.020       0.030        -2353.876      -2346.497
+           0.010       0.020        -2342.546      -2338.734
+
+    H1 Value
+
+        Mean                             -2431.639
+        Std Dev                             41.498
+        Number of successful computations      200
+
+             Proportions                   Percentiles
+        Expected    Observed         Expected       Observed
+           0.990       0.995        -2528.177      -2521.387
+           0.980       0.990        -2516.864      -2509.557
+           0.950       0.960        -2499.900      -2495.842
+           0.900       0.915        -2484.824      -2483.444
+           0.800       0.810        -2466.564      -2466.429
+           0.700       0.680        -2453.401      -2457.208
+           0.500       0.470        -2431.639      -2435.568
+           0.300       0.280        -2409.878      -2413.559
+           0.200       0.190        -2396.714      -2397.857
+           0.100       0.100        -2378.455      -2379.720
+           0.050       0.065        -2363.379      -2355.343
+           0.020       0.030        -2346.414      -2339.394
+           0.010       0.020        -2335.102      -2328.901
+
+Information Criteria
+
+    Akaike (AIC)
+
+        Mean                              4902.476
+        Std Dev                             83.130
+        Number of successful computations      200
+
+             Proportions                   Percentiles
+        Expected    Observed         Expected       Observed
+           0.990       0.980         4709.091       4686.532
+           0.980       0.970         4731.753       4706.631
+           0.950       0.935         4765.736       4744.517
+           0.900       0.895         4795.937       4793.403
+           0.800       0.820         4832.514       4834.872
+           0.700       0.715         4858.883       4861.904
+           0.500       0.535         4902.476       4910.500
+           0.300       0.325         4946.069       4951.157
+           0.200       0.200         4972.438       4972.082
+           0.100       0.080         5009.015       5003.436
+           0.050       0.040         5039.216       5026.063
+           0.020       0.015         5073.199       5058.037
+           0.010       0.005         5095.860       5077.510
+
+    Bayesian (BIC)
+
+        Mean                              4946.921
+        Std Dev                             83.130
+        Number of successful computations      200
+
+             Proportions                   Percentiles
+        Expected    Observed         Expected       Observed
+           0.990       0.980         4753.537       4730.977
+           0.980       0.970         4776.198       4751.076
+           0.950       0.935         4810.181       4788.962
+           0.900       0.895         4840.382       4837.848
+           0.800       0.820         4876.959       4879.317
+           0.700       0.715         4903.328       4906.350
+           0.500       0.535         4946.921       4954.945
+           0.300       0.325         4990.514       4995.603
+           0.200       0.200         5016.883       5016.528
+           0.100       0.080         5053.460       5047.882
+           0.050       0.040         5083.661       5070.508
+           0.020       0.015         5117.645       5102.482
+           0.010       0.005         5140.306       5121.956
+
+    Sample-Size Adjusted BIC (n* = (n + 2) / 24)
+
+        Mean                              4908.864
+        Std Dev                             83.130
+        Number of successful computations      200
+
+             Proportions                   Percentiles
+        Expected    Observed         Expected       Observed
+           0.990       0.980         4715.480       4692.921
+           0.980       0.970         4738.141       4713.019
+           0.950       0.935         4772.124       4750.905
+           0.900       0.895         4802.325       4799.791
+           0.800       0.820         4838.902       4841.260
+           0.700       0.715         4865.271       4868.293
+           0.500       0.535         4908.864       4916.888
+           0.300       0.325         4952.458       4957.546
+           0.200       0.200         4978.826       4978.471
+           0.100       0.080         5015.403       5009.825
+           0.050       0.040         5045.604       5032.451
+           0.020       0.015         5079.588       5064.425
+           0.010       0.005         5102.249       5083.899
+
+Chi-Square Test of Model Fit
+
+        Degrees of freedom                      15
+
+        Mean                                15.197
+        Std Dev                              5.532
+        Number of successful computations      200
+
+             Proportions                   Percentiles
+        Expected    Observed         Expected       Observed
+           0.990       0.985            5.229          3.497
+           0.980       0.970            5.985          5.378
+           0.950       0.945            7.261          7.060
+           0.900       0.895            8.547          8.213
+           0.800       0.800           10.307         10.114
+           0.700       0.730           11.721         12.109
+           0.500       0.515           14.339         14.444
+           0.300       0.335           17.322         17.723
+           0.200       0.225           19.311         19.677
+           0.100       0.105           22.307         22.369
+           0.050       0.045           24.996         24.829
+           0.020       0.020           28.259         27.711
+           0.010       0.005           30.578         29.678
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+        Mean                                 0.014
+        Std Dev                              0.018
+        Number of successful computations      200
+
+             Proportions                   Percentiles
+        Expected    Observed         Expected       Observed
+           0.990       1.000           -0.027          0.000
+           0.980       1.000           -0.022          0.000
+           0.950       1.000           -0.015          0.000
+           0.900       1.000           -0.008          0.000
+           0.800       1.000            0.000          0.000
+           0.700       0.470            0.005          0.000
+           0.500       0.415            0.014          0.000
+           0.300       0.325            0.023          0.025
+           0.200       0.250            0.029          0.032
+           0.100       0.140            0.037          0.040
+           0.050       0.090            0.043          0.047
+           0.020       0.035            0.050          0.053
+           0.010       0.020            0.055          0.057
+
+SRMR (Standardized Root Mean Square Residual)
+
+        Mean                                 0.053
+        Std Dev                              0.020
+        Number of successful computations      200
+
+             Proportions                   Percentiles
+        Expected    Observed         Expected       Observed
+           0.990       1.000            0.006          0.018
+           0.980       1.000            0.011          0.021
+           0.950       0.985            0.020          0.029
+           0.900       0.960            0.027          0.032
+           0.800       0.825            0.036          0.038
+           0.700       0.670            0.042          0.042
+           0.500       0.420            0.053          0.048
+           0.300       0.205            0.064          0.059
+           0.200       0.150            0.070          0.065
+           0.100       0.110            0.079          0.082
+           0.050       0.075            0.087          0.093
+           0.020       0.040            0.095          0.115
+           0.010       0.035            0.101          0.117
+
+
+MODEL RESULTS
+
+                              ESTIMATES              S. E.     M. S. E.  95%  % Sig
+                 Population   Average   Std. Dev.   Average             Cover Coeff
+ INT      BY
+  Y1                  1.000     1.0000     0.0000     0.0000     0.0000 1.000 0.000
+  Y2                  1.000     1.0000     0.0000     0.0000     0.0000 1.000 0.000
+  Y3                  1.000     1.0000     0.0000     0.0000     0.0000 1.000 0.000
+
+ SLOPE    BY
+  Y1                  0.000     0.0000     0.0000     0.0000     0.0000 1.000 0.000
+  Y2                  0.500     0.5000     0.0000     0.0000     0.0000 1.000 0.000
+  Y3                  1.000     1.0000     0.0000     0.0000     0.0000 1.000 0.000
+
+ INT      ON
+  DSTRAT2             1.500     1.5268     3.6627     3.9264    13.3492 0.955 0.055
+  DSTRAT3             9.000     8.8830     0.7580     0.7883     0.5855 0.965 1.000
+  DSTRAT4             7.500     7.5064     1.0257     0.9783     1.0469 0.935 1.000
+  BLT                 0.000     0.0000     0.0000     0.0000     0.0000 1.000 0.000
+  CBT                 0.000     0.0000     0.0000     0.0000     0.0000 1.000 0.000
+  BXC                 0.000     0.0000     0.0000     0.0000     0.0000 1.000 0.000
+
+ SLOPE    ON
+  BLT                -4.000    -4.0634     1.0602     1.0257     1.1224 0.945 0.950
+  CBT                -4.000    -4.0827     1.0543     1.0253     1.1128 0.930 0.955
+  BXC                 4.000     3.9628     1.3627     1.4954     1.8491 0.965 0.780
+
+ INT      WITH
+  SLOPE              -6.500    -6.0518     5.5592     5.6318    30.9508 0.945 0.145
+
+ Intercepts
+  Y1                  0.000     0.0000     0.0000     0.0000     0.0000 1.000 0.000
+  Y2                  0.000     0.0000     0.0000     0.0000     0.0000 1.000 0.000
+  Y3                  0.000     0.0000     0.0000     0.0000     0.0000 1.000 0.000
+  INT                52.200    52.2670     0.5754     0.5850     0.3339 0.940 1.000
+  SLOPE              -0.200    -0.1102     0.9328     0.9477     0.8739 0.960 0.060
+
+ Residual Variances
+  Y1                 26.400    26.3617     2.7516     2.7586     7.5349 0.960 1.000
+  Y2                 26.400    26.3617     2.7516     2.7586     7.5349 0.960 1.000
+  Y3                 26.400    26.3617     2.7516     2.7586     7.5349 0.960 1.000
+  INT                34.400    34.0771     5.1039     5.2910    26.0240 0.945 1.000
+  SLOPE              24.300    22.7772     9.1162     9.6781    85.0078 0.955 0.660
+
+New/Additional Parameters
+  SS1                 0.500    -0.1102     0.9328     0.9477     1.2382 0.905 0.060
+  SS2                 0.500    -4.1736     0.9053     0.9507    22.6582 0.000 0.995
+  SS3                 0.500    -4.1929     0.9900     0.9487    22.9984 0.000 0.985
+  SS4                 0.500     3.8526     1.5953     1.5905    13.7719 0.455 0.680
+  MBLT                0.500    -2.0820     1.2456     1.2670     8.2105 0.455 0.385
+  MCBT                0.500    -2.1013     1.2432     1.2697     8.3044 0.465 0.370
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Average Condition Number for the Information Matrix      0.368E-04
+       (ratio of smallest to largest eigenvalue)
+
+
+TECHNICAL OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              Y1            Y2            Y3            DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+                  0             0             0             0             0
+
+
+           NU
+              DSTRAT4       BLT           CBT           BXC
+              ________      ________      ________      ________
+                  0             0             0             0
+
+
+           LAMBDA
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+ Y1                 0             0             0             0             0
+ Y2                 0             0             0             0             0
+ Y3                 0             0             0             0             0
+ DSTRAT2            0             0             0             0             0
+ DSTRAT3            0             0             0             0             0
+ DSTRAT4            0             0             0             0             0
+ BLT                0             0             0             0             0
+ CBT                0             0             0             0             0
+ BXC                0             0             0             0             0
+
+
+           LAMBDA
+              BLT           CBT           BXC
+              ________      ________      ________
+ Y1                 0             0             0
+ Y2                 0             0             0
+ Y3                 0             0             0
+ DSTRAT2            0             0             0
+ DSTRAT3            0             0             0
+ DSTRAT4            0             0             0
+ BLT                0             0             0
+ CBT                0             0             0
+ BXC                0             0             0
+
+
+           THETA
+              Y1            Y2            Y3            DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+ Y1                 1
+ Y2                 0             1
+ Y3                 0             0             1
+ DSTRAT2            0             0             0             0
+ DSTRAT3            0             0             0             0             0
+ DSTRAT4            0             0             0             0             0
+ BLT                0             0             0             0             0
+ CBT                0             0             0             0             0
+ BXC                0             0             0             0             0
+
+
+           THETA
+              DSTRAT4       BLT           CBT           BXC
+              ________      ________      ________      ________
+ DSTRAT4            0
+ BLT                0             0
+ CBT                0             0             0
+ BXC                0             0             0             0
+
+
+           ALPHA
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+                  2             3             0             0             0
+
+
+           ALPHA
+              BLT           CBT           BXC
+              ________      ________      ________
+                  0             0             0
+
+
+           BETA
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+ INT                0             0             4             5             6
+ SLOPE              0             0             0             0             0
+ DSTRAT2            0             0             0             0             0
+ DSTRAT3            0             0             0             0             0
+ DSTRAT4            0             0             0             0             0
+ BLT                0             0             0             0             0
+ CBT                0             0             0             0             0
+ BXC                0             0             0             0             0
+
+
+           BETA
+              BLT           CBT           BXC
+              ________      ________      ________
+ INT                0             0             0
+ SLOPE              7             8             9
+ DSTRAT2            0             0             0
+ DSTRAT3            0             0             0
+ DSTRAT4            0             0             0
+ BLT                0             0             0
+ CBT                0             0             0
+ BXC                0             0             0
+
+
+           PSI
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+ INT               10
+ SLOPE             11            12
+ DSTRAT2            0             0             0
+ DSTRAT3            0             0             0             0
+ DSTRAT4            0             0             0             0             0
+ BLT                0             0             0             0             0
+ CBT                0             0             0             0             0
+ BXC                0             0             0             0             0
+
+
+           PSI
+              BLT           CBT           BXC
+              ________      ________      ________
+ BLT                0
+ CBT                0             0
+ BXC                0             0             0
+
+
+     PARAMETER SPECIFICATION FOR THE ADDITIONAL PARAMETERS
+
+
+           New/Additional Parameters
+              SS1           SS2           SS3           SS4           MBLT
+              ________      ________      ________      ________      ________
+                   13            14            15            16            17
+
+
+           New/Additional Parameters
+              MCBT
+              ________
+                   18
+
+
+     STARTING VALUES
+
+
+           NU
+              Y1            Y2            Y3            DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              DSTRAT4       BLT           CBT           BXC
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+ Y1             1.000         0.000         0.000         0.000         0.000
+ Y2             1.000         0.500         0.000         0.000         0.000
+ Y3             1.000         1.000         0.000         0.000         0.000
+ DSTRAT2        0.000         0.000         1.000         0.000         0.000
+ DSTRAT3        0.000         0.000         0.000         1.000         0.000
+ DSTRAT4        0.000         0.000         0.000         0.000         1.000
+ BLT            0.000         0.000         0.000         0.000         0.000
+ CBT            0.000         0.000         0.000         0.000         0.000
+ BXC            0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              BLT           CBT           BXC
+              ________      ________      ________
+ Y1             0.000         0.000         0.000
+ Y2             0.000         0.000         0.000
+ Y3             0.000         0.000         0.000
+ DSTRAT2        0.000         0.000         0.000
+ DSTRAT3        0.000         0.000         0.000
+ DSTRAT4        0.000         0.000         0.000
+ BLT            1.000         0.000         0.000
+ CBT            0.000         1.000         0.000
+ BXC            0.000         0.000         1.000
+
+
+           THETA
+              Y1            Y2            Y3            DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+ Y1            26.400
+ Y2             0.000        26.400
+ Y3             0.000         0.000        26.400
+ DSTRAT2        0.000         0.000         0.000         0.000
+ DSTRAT3        0.000         0.000         0.000         0.000         0.000
+ DSTRAT4        0.000         0.000         0.000         0.000         0.000
+ BLT            0.000         0.000         0.000         0.000         0.000
+ CBT            0.000         0.000         0.000         0.000         0.000
+ BXC            0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              DSTRAT4       BLT           CBT           BXC
+              ________      ________      ________      ________
+ DSTRAT4        0.000
+ BLT            0.000         0.000
+ CBT            0.000         0.000         0.000
+ BXC            0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+               52.200        -0.200         0.013         0.400         0.223
+
+
+           ALPHA
+              BLT           CBT           BXC
+              ________      ________      ________
+                0.467         0.500         0.127
+
+
+           BETA
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+ INT            0.000         0.000         1.500         9.000         7.500
+ SLOPE          0.000         0.000         0.000         0.000         0.000
+ DSTRAT2        0.000         0.000         0.000         0.000         0.000
+ DSTRAT3        0.000         0.000         0.000         0.000         0.000
+ DSTRAT4        0.000         0.000         0.000         0.000         0.000
+ BLT            0.000         0.000         0.000         0.000         0.000
+ CBT            0.000         0.000         0.000         0.000         0.000
+ BXC            0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              BLT           CBT           BXC
+              ________      ________      ________
+ INT            0.000         0.000         0.000
+ SLOPE         -4.000        -4.000         4.000
+ DSTRAT2        0.000         0.000         0.000
+ DSTRAT3        0.000         0.000         0.000
+ DSTRAT4        0.000         0.000         0.000
+ BLT            0.000         0.000         0.000
+ CBT            0.000         0.000         0.000
+ BXC            0.000         0.000         0.000
+
+
+           PSI
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+ INT           34.400
+ SLOPE         -6.500        24.300
+ DSTRAT2        0.000         0.000         0.013
+ DSTRAT3        0.000         0.000         0.005         0.240
+ DSTRAT4        0.000         0.000        -0.003         0.011         0.173
+ BLT            0.000         0.000         0.007         0.017         0.006
+ CBT            0.000         0.000         0.000        -0.017        -0.018
+ BXC            0.000         0.000        -0.002         0.009         0.012
+
+
+           PSI
+              BLT           CBT           BXC
+              ________      ________      ________
+ BLT            0.249
+ CBT            0.000         0.250
+ BXC            0.024        -0.007         0.111
+
+
+     STARTING VALUES FOR THE ADDITIONAL PARAMETERS
+
+
+           New/Additional Parameters
+              SS1           SS2           SS3           SS4           MBLT
+              ________      ________      ________      ________      ________
+                0.500         0.500         0.500         0.500         0.500
+
+
+           New/Additional Parameters
+              MCBT
+              ________
+                0.500
+
+
+     POPULATION VALUES
+
+
+           NU
+              Y1            Y2            Y3            DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              DSTRAT4       BLT           CBT           BXC
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+ Y1             1.000         0.000         0.000         0.000         0.000
+ Y2             1.000         0.500         0.000         0.000         0.000
+ Y3             1.000         1.000         0.000         0.000         0.000
+ DSTRAT2        0.000         0.000         1.000         0.000         0.000
+ DSTRAT3        0.000         0.000         0.000         1.000         0.000
+ DSTRAT4        0.000         0.000         0.000         0.000         1.000
+ BLT            0.000         0.000         0.000         0.000         0.000
+ CBT            0.000         0.000         0.000         0.000         0.000
+ BXC            0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              BLT           CBT           BXC
+              ________      ________      ________
+ Y1             0.000         0.000         0.000
+ Y2             0.000         0.000         0.000
+ Y3             0.000         0.000         0.000
+ DSTRAT2        0.000         0.000         0.000
+ DSTRAT3        0.000         0.000         0.000
+ DSTRAT4        0.000         0.000         0.000
+ BLT            1.000         0.000         0.000
+ CBT            0.000         1.000         0.000
+ BXC            0.000         0.000         1.000
+
+
+           THETA
+              Y1            Y2            Y3            DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+ Y1            26.400
+ Y2             0.000        26.400
+ Y3             0.000         0.000        26.400
+ DSTRAT2        0.000         0.000         0.000         0.000
+ DSTRAT3        0.000         0.000         0.000         0.000         0.000
+ DSTRAT4        0.000         0.000         0.000         0.000         0.000
+ BLT            0.000         0.000         0.000         0.000         0.000
+ CBT            0.000         0.000         0.000         0.000         0.000
+ BXC            0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              DSTRAT4       BLT           CBT           BXC
+              ________      ________      ________      ________
+ DSTRAT4        0.000
+ BLT            0.000         0.000
+ CBT            0.000         0.000         0.000
+ BXC            0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+               52.200        -0.200         0.000         0.000         0.000
+
+
+           ALPHA
+              BLT           CBT           BXC
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           BETA
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+ INT            0.000         0.000         1.500         9.000         7.500
+ SLOPE          0.000         0.000         0.000         0.000         0.000
+ DSTRAT2        0.000         0.000         0.000         0.000         0.000
+ DSTRAT3        0.000         0.000         0.000         0.000         0.000
+ DSTRAT4        0.000         0.000         0.000         0.000         0.000
+ BLT            0.000         0.000         0.000         0.000         0.000
+ CBT            0.000         0.000         0.000         0.000         0.000
+ BXC            0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              BLT           CBT           BXC
+              ________      ________      ________
+ INT            0.000         0.000         0.000
+ SLOPE         -4.000        -4.000         4.000
+ DSTRAT2        0.000         0.000         0.000
+ DSTRAT3        0.000         0.000         0.000
+ DSTRAT4        0.000         0.000         0.000
+ BLT            0.000         0.000         0.000
+ CBT            0.000         0.000         0.000
+ BXC            0.000         0.000         0.000
+
+
+           PSI
+              INT           SLOPE         DSTRAT2       DSTRAT3       DSTRAT4
+              ________      ________      ________      ________      ________
+ INT           34.400
+ SLOPE         -6.500        24.300
+ DSTRAT2        0.000         0.000         1.000
+ DSTRAT3        0.000         0.000         0.000         1.000
+ DSTRAT4        0.000         0.000         0.000         0.000         1.000
+ BLT            0.000         0.000         0.000         0.000         0.000
+ CBT            0.000         0.000         0.000         0.000         0.000
+ BXC            0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              BLT           CBT           BXC
+              ________      ________      ________
+ BLT            1.000
+ CBT            0.000         1.000
+ BXC            0.000         0.000         1.000
+
+
+RESULTS SAVING INFORMATION
+
+  Order of data
+
+    Replication number
+    Parameter estimates
+     (saved in order shown in Technical 1 output)
+    Standard errors
+     (saved in order shown in Technical 1 output)
+    Chi-square : Value
+    Chi-square : Degrees of Freedom
+    Chi-square : P-Value
+    H0 Loglikelihood
+    H1 Loglikelihood
+    Number of Free Parameters
+    Akaike (AIC)
+    Bayesian (BIC)
+    Sample-Size Adjusted BIC
+    RMSEA : Estimate
+    SRMR
+
+  Save file
+    sleepcare_sim_estimate.dat
+
+  Save file format           Free
+
+
+     Beginning Time:  05:35:54
+        Ending Time:  05:35:55
+       Elapsed Time:  00:00:01
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2019 Muthen & Muthen
