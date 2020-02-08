@@ -1,0 +1,25 @@
+TITLE:
+Estimates for Power Analysis
+DATA:
+FILE = "power_isi_9826bb53e5869f9c37ae9a25e0fc65da.dat";
+ 
+VARIABLE:
+NAMES = ISI1 ISI2 ISI3 dstrat2 dstrat3 dstrat4 dcond; 
+ MISSING=.;
+ 
+ANALYSIS:
+ESTIMATOR = ML;!ESTIMATOR = BAYES; ALGORITHM=GIBBS(RW); BITER = 100000 (20000);
+MODEL:
+
+  [ISI1 - ISI3@0]; ! fix residual intercepts to 0
+  ISI1* ISI2* ISI3* (resvar); ! homogenous residual variances
+  int BY ISI1@1 ISI2@1 ISI3@1;
+  slope BY ISI1@0 ISI2@0.5 ISI3@1;
+  int ON dstrat2 dstrat3 dstrat4 dcond@0 (i1 - i4);
+  slope ON dcond (s4);
+  [int* slope*] (rm1 - rm2);
+  int* slope* (rv1-rv2);
+  int WITH slope*0;
+
+OUTPUT:
+STDYX;

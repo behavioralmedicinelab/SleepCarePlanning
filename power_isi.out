@@ -1,0 +1,307 @@
+Mplus VERSION 8.4
+MUTHEN & MUTHEN
+02/08/2020  12:34 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE:
+  Estimates for Power Analysis
+  DATA:
+  FILE = "power_isi_9826bb53e5869f9c37ae9a25e0fc65da.dat";
+
+  VARIABLE:
+  NAMES = ISI1 ISI2 ISI3 dstrat2 dstrat3 dstrat4 dcond;
+   MISSING=.;
+
+  ANALYSIS:
+  ESTIMATOR = ML;!ESTIMATOR = BAYES; ALGORITHM=GIBBS(RW); BITER = 100000 (20000);
+  MODEL:
+
+    [ISI1 - ISI3@0]; ! fix residual intercepts to 0
+    ISI1* ISI2* ISI3* (resvar); ! homogenous residual variances
+    int BY ISI1@1 ISI2@1 ISI3@1;
+    slope BY ISI1@0 ISI2@0.5 ISI3@1;
+    int ON dstrat2 dstrat3 dstrat4 dcond@0 (i1 - i4);
+    slope ON dcond (s4);
+    [int* slope*] (rm1 - rm2);
+    int* slope* (rv1-rv2);
+    int WITH slope*0;
+
+  OUTPUT:
+  STDYX;
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+
+Estimates for Power Analysis
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                          92
+
+Number of dependent variables                                    3
+Number of independent variables                                  4
+Number of continuous latent variables                            2
+
+Observed dependent variables
+
+  Continuous
+   ISI1        ISI2        ISI3
+
+Observed independent variables
+   DSTRAT2     DSTRAT3     DSTRAT4     DCOND
+
+Continuous latent variables
+   INT         SLOPE
+
+
+Estimator                                                       ML
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  power_isi_9826bb53e5869f9c37ae9a25e0fc65da.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns             4
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              ISI1          ISI2          ISI3          DSTRAT2       DSTRAT3
+              ________      ________      ________      ________      ________
+ ISI1           1.000
+ ISI2           0.772         0.772
+ ISI3           0.652         0.641         0.652
+ DSTRAT2        1.000         0.772         0.652         1.000
+ DSTRAT3        1.000         0.772         0.652         1.000         1.000
+ DSTRAT4        1.000         0.772         0.652         1.000         1.000
+ DCOND          1.000         0.772         0.652         1.000         1.000
+
+
+           Covariance Coverage
+              DSTRAT4       DCOND
+              ________      ________
+ DSTRAT4        1.000
+ DCOND          1.000         1.000
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     ISI1                 13.022       0.200       1.000    2.17%       8.000     11.000     13.000
+              92.000      31.217      -0.570      26.000    1.09%      14.000     18.000
+     ISI2                 10.507       0.679       1.000    1.41%       6.000      8.000     10.000
+              71.000      28.194       0.544      27.000    1.41%      12.000     15.000
+     ISI3                  9.350       0.445       0.000    3.33%       5.000      7.000      9.000
+              60.000      28.594      -0.182      25.000    1.67%      10.000     14.000
+     DSTRAT2               0.098       2.708       0.000   90.22%       0.000      0.000      0.000
+              92.000       0.088       5.331       1.000    9.78%       0.000      0.000
+     DSTRAT3               0.370       0.540       0.000   63.04%       0.000      0.000      0.000
+              92.000       0.233      -1.708       1.000   36.96%       0.000      1.000
+     DSTRAT4               0.359       0.589       0.000   64.13%       0.000      0.000      0.000
+              92.000       0.230      -1.653       1.000   35.87%       0.000      1.000
+     DCOND                 0.522      -0.087       0.000   47.83%       0.000      0.000      1.000
+              92.000       0.250      -1.992       1.000   52.17%       1.000      1.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       10
+
+Loglikelihood
+
+          H0 Value                        -633.717
+          H1 Value                        -625.366
+
+Information Criteria
+
+          Akaike (AIC)                    1287.434
+          Bayesian (BIC)                  1312.651
+          Sample-Size Adjusted BIC        1281.086
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             16.702
+          Degrees of Freedom                    11
+          P-Value                           0.1170
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.075
+          90 Percent C.I.                    0.000  0.144
+          Probability RMSEA <= .05           0.256
+
+CFI/TLI
+
+          CFI                                0.953
+          TLI                                0.936
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                            136.952
+          Degrees of Freedom                    15
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.121
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INT      BY
+    ISI1               1.000      0.000    999.000    999.000
+    ISI2               1.000      0.000    999.000    999.000
+    ISI3               1.000      0.000    999.000    999.000
+
+ SLOPE    BY
+    ISI1               0.000      0.000    999.000    999.000
+    ISI2               0.500      0.000    999.000    999.000
+    ISI3               1.000      0.000    999.000    999.000
+
+ INT      ON
+    DSTRAT2           -0.425      1.740     -0.244      0.807
+    DSTRAT3            6.516      1.294      5.035      0.000
+    DSTRAT4            5.690      1.285      4.428      0.000
+    DCOND              0.000      0.000    999.000    999.000
+
+ SLOPE    ON
+    DCOND             -2.843      1.153     -2.465      0.014
+
+ INT      WITH
+    SLOPE              1.037      3.445      0.301      0.763
+
+ Intercepts
+    ISI1               0.000      0.000    999.000    999.000
+    ISI2               0.000      0.000    999.000    999.000
+    ISI3               0.000      0.000    999.000    999.000
+    INT                8.539      1.059      8.065      0.000
+    SLOPE             -2.099      0.853     -2.462      0.014
+
+ Residual Variances
+    ISI1               8.022      1.424      5.632      0.000
+    ISI2               8.022      1.424      5.632      0.000
+    ISI3               8.022      1.424      5.632      0.000
+    INT               12.115      3.148      3.848      0.000
+    SLOPE              7.668      5.360      1.431      0.153
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INT      BY
+    ISI1               0.845      0.037     22.839      0.000
+    ISI2               0.797      0.060     13.251      0.000
+    ISI3               0.709      0.069     10.324      0.000
+
+ SLOPE    BY
+    ISI1               0.000      0.000    999.000    999.000
+    ISI2               0.277      0.084      3.316      0.001
+    ISI3               0.493      0.137      3.611      0.000
+
+ INT      ON
+    DSTRAT2           -0.028      0.116     -0.244      0.807
+    DSTRAT3            0.703      0.132      5.323      0.000
+    DSTRAT4            0.610      0.134      4.555      0.000
+    DCOND              0.000      0.000    999.000    999.000
+
+ SLOPE    ON
+    DCOND             -0.456      0.201     -2.275      0.023
+
+ INT      WITH
+    SLOPE              0.108      0.389      0.276      0.782
+
+ Intercepts
+    ISI1               0.000      0.000    999.000    999.000
+    ISI2               0.000      0.000    999.000    999.000
+    ISI3               0.000      0.000    999.000    999.000
+    INT                1.909      0.354      5.388      0.000
+    SLOPE             -0.674      0.361     -1.869      0.062
+
+ Residual Variances
+    ISI1               0.286      0.063      4.578      0.000
+    ISI2               0.255      0.052      4.920      0.000
+    ISI3               0.201      0.048      4.163      0.000
+    INT                0.605      0.111      5.437      0.000
+    SLOPE              0.792      0.183      4.327      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    ISI1               0.714      0.063     11.420      0.000
+    ISI2               0.745      0.052     14.404      0.000
+    ISI3               0.799      0.048     16.503      0.000
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    INT                0.395      0.111      3.544      0.000
+    SLOPE              0.208      0.183      1.138      0.255
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.705E-03
+       (ratio of smallest to largest eigenvalue)
+
+
+     Beginning Time:  00:34:04
+        Ending Time:  00:34:04
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2019 Muthen & Muthen

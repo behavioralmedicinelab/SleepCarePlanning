@@ -2,47 +2,53 @@ TITLE:
 SleepCare Monte Carlo;
 MONTECARLO:
 
-NAMES ARE Y1 Y2 Y3 dstrat2 dstrat3 dstrat4 blt cbt bxc;
+NAMES ARE Y1 Y2 Y3 dstrat2 dstrat3 dstrat4
+ dstrat5 dstrat6 dstrat7 dstrat8
+ blt cbt bxc;
 NOBSERVATIONS = 300%;
-NREPS = 200;
+NREPS = 500;
 SEED = 58459;
 PATMISS = Y1(0) Y2(0.25) Y3(0.35);
 PATPROBS = 1;
-CUTPOINTS = dstrat2 (2.197) dstrat3 (0.201) dstrat4 (0.847)
+CUTPOINTS = dstrat2 (2.065) dstrat3 (2.065) dstrat4 (3.245)
+ dstrat5 (1.237) dstrat6 (2.512) dstrat7 (2.512)
+ dstrat8 (3.664)
  blt (0) cbt(0) bxc (1.098612);
 RESULTS = sleepcare_sim_estimate.dat;
 
 MODEL POPULATION:
 
 [Y1@0 Y2@0 Y3@0];
-Y1 - Y3@9.6792;
+Y1 - Y3@8.8726;
 dstrat2-bxc@1;
-
 int BY Y1@1 Y2@1 Y3@1;
 slope BY Y1@0 Y2@0.5 Y3@1;
-
 int ON
-  dstrat2@-0.8 dstrat3@6.7 dstrat4@5.9
+  dstrat2@5 dstrat3@1 dstrat4@6
+  dstrat5@0 dstrat6@5 dstrat7@1
+  dstrat8@6
   blt@0 cbt@0 bxc@0 ;
 slope ON blt@-3 cbt@-3 bxc@3 ;
 [int@8.469 slope@-2];
-int@13.326 slope@6.765;
+int@12.2155 slope@6.765;
 int WITH slope@2.314;
 
 ANALYSIS:
-ESTIMATOR = ML;
+ESTIMATOR = ML; PROCESSORS = 4;
 MODEL:
 
 [Y1 - Y3@0]; ! fix residual intercepts to 0
-Y1-Y3*9.6792 (resvar); ! homogenous residual variances
+Y1-Y3*8.8726 (resvar); ! homogenous residual variances
 int BY Y1@1 Y2@1 Y3@1;
 slope BY Y1@0 Y2@0.5 Y3@1;
 int ON
-  dstrat2*-0.8 dstrat3*6.7 dstrat4*5.9
+  dstrat2@5 dstrat3@1 dstrat4@6
+  dstrat5@0 dstrat6@5 dstrat7@1
+  dstrat8@6
   blt@0 cbt@0 bxc@0 ;
 slope ON blt*-3 cbt*-3 bxc*3 (s1-s3);
 [int*8.469 slope*-2] (int1-int2);
-int*13.326 slope*6.765;
+int*12.2155 slope*6.765;
 int WITH slope*2.314;
 
 MODEL CONSTRAINT:

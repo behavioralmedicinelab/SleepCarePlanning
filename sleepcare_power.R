@@ -55,13 +55,17 @@ SEback <- function(x) 100 - ((100 - x)^2)
 SleepCare_MonteCarlo <- function(swap, modelout = "power_sim.inp",
                                  TITLE = "SleepCare Monte Carlo;") {
 MONTECARLO <-  "
-NAMES ARE Y1 Y2 Y3 dstrat2 dstrat3 dstrat4 blt cbt bxc;
+NAMES ARE Y1 Y2 Y3 dstrat2 dstrat3 dstrat4
+ dstrat5 dstrat6 dstrat7 dstrat8
+ blt cbt bxc;
 NOBSERVATIONS = %nobs%;
 NREPS = %nreps%;
 SEED = 58459;
 PATMISS = Y1(%y1miss%) Y2(%y2miss%) Y3(%y3miss%);
 PATPROBS = 1;
 CUTPOINTS = dstrat2 (%strat2cut%) dstrat3 (%strat3cut%) dstrat4 (%strat4cut%)
+ dstrat5 (%strat5cut%) dstrat6 (%strat6cut%) dstrat7 (%strat7cut%)
+ dstrat8 (%strat8cut%)
  blt (0) cbt(0) bxc (1.098612);
 RESULTS = sleepcare_sim_estimate.dat;
 "
@@ -73,6 +77,8 @@ int BY Y1@1 Y2@1 Y3@1;
 slope BY Y1@0 Y2@0.5 Y3@1;
 int ON
   dstrat2@%istrat2% dstrat3@%istrat3% dstrat4@%istrat4%
+  dstrat5@%istrat5% dstrat6@%istrat6% dstrat7@%istrat7%
+  dstrat8@%istrat8%
   blt@%iblt% cbt@%icbt% bxc@%ibxc% ;
 slope ON blt@%sblt% cbt@%scbt% bxc@%sbxc% ;
 [int@%intm% slope@%slopem%];
@@ -85,7 +91,9 @@ Y1-Y3*%resvar% (resvar); ! homogenous residual variances
 int BY Y1@1 Y2@1 Y3@1;
 slope BY Y1@0 Y2@0.5 Y3@1;
 int ON
-  dstrat2*%istrat2% dstrat3*%istrat3% dstrat4*%istrat4%
+  dstrat2@%istrat2% dstrat3@%istrat3% dstrat4@%istrat4%
+  dstrat5@%istrat5% dstrat6@%istrat6% dstrat7@%istrat7%
+  dstrat8@%istrat8%
   blt@0 cbt@0 bxc@0 ;
 slope ON blt*%sblt% cbt*%scbt% bxc*%sbxc% (s1-s3);
 [int*%intm% slope*%slopem%] (int1-int2);
@@ -102,7 +110,7 @@ for (v in names(swap)) {
   msimfit <- mplusModeler(
     mplusObject(
   TITLE = TITLE,
-  ANALYSIS = "ESTIMATOR = ML;",
+  ANALYSIS = "ESTIMATOR = ML; PROCESSORS = 4;",
   MONTECARLO = MONTECARLO,
   MODELPOPULATION = MODELPOPULATION,
   MODEL = MODEL,
@@ -166,35 +174,51 @@ coef(mfit)
 
 powerGRIDISI <- as.data.table(expand.grid(
   NUM = seq(from = 100, to = 300, by = 10),
-  resvar = 8.066 * c(1, 1.2),
-  intvar = 11.105 * c(1, 1.2),
+  resvar = 8.066 * c(1, 1.1),
+  intvar = 11.105 * c(1, 1.1),
   blt = -5 - -2,
   cbt = c(-6 - -2, -5 - -2),
-  bxc = c(0, +1, +3)))
+  bxc = c(-3, 0, +3)))
 
 table(rowSums(powerGRIDISI[,.(blt, cbt, bxc)]))
 table(rowSums(powerGRIDISI[,.(blt, cbt, bxc)])-2)
 
 #### STRATA info
-## BC - low ISI
-## CC - low ISI
-## BC - high ISI
-## CC - high ISI
-## assume 60 v 40 split on BC vs CC
+## 1: PM - 1to3 - low ISI
+## 2: PM - 1to3 - High ISI
+## 3: PM -   4  - low ISI
+## 4: PM -   4  - High ISI
+## 5: MH - 1to3 - low ISI
+## 6: MH - 1to3 - High ISI
+## 7: MH -   4  - low ISI
+## 8: MH -   4  - High ISI
+
+## assume 60 v 40 split on PM vs MH
 ## assume a 75 v 25 split on high v low ISI
+## assume a 75 v 25 split on 1to3 v 4 (cancer stage)
 ## use this to calculate probability in each strata
 
 if (FALSE) {
 isipower <- lapply(1:nrow(powerGRIDISI), function(i) {
   SleepCare_MonteCarlo(swap = c(
-  "%nobs" = powerGRIDISI$NUM[i], "%nreps%" = 200,
+  "%nobs" = powerGRIDISI$NUM[i], "%nreps%" = 500,
   "%y1miss%" = 0, "%y2miss%" = .25, "%y3miss%" = .35,
-  "%strat2cut%" = round(qlogis(.4 * .25, lower.tail=FALSE), 3),
-  "%strat3cut%" = round(qlogis(.6 * .75, lower.tail=FALSE), 3),
-  "%strat4cut%" = round(qlogis(.4 * .75, lower.tail=FALSE), 3),
+  "%strat2cut%" = round(qlogis(.6 * .75 * .25, lower.tail=FALSE), 3),
+  "%strat3cut%" = round(qlogis(.6 * .25 * .75, lower.tail=FALSE), 3),
+  "%strat4cut%" = round(qlogis(.6 * .25 * .25, lower.tail=FALSE), 3),
+  "%strat5cut%" = round(qlogis(.4 * .75 * .75, lower.tail=FALSE), 3),
+  "%strat6cut%" = round(qlogis(.4 * .75 * .25, lower.tail=FALSE), 3),
+  "%strat7cut%" = round(qlogis(.4 * .25 * .75, lower.tail=FALSE), 3),
+  "%strat8cut%" = round(qlogis(.4 * .25 * .25, lower.tail=FALSE), 3),
   "%y1m%" = 0, "%y2m%" = 0, "%y3m%" = 0,
   "%resvar%" = powerGRIDISI$resvar[i],
-  "%istrat2%" = -.8, "%istrat3%" = 6.7, "%istrat4%" = 5.9,
+  "%istrat2%" = 5,
+  "%istrat3%" = 1,
+  "%istrat4%" = 6,
+  "%istrat5%" = 0,
+  "%istrat6%" = 5,
+  "%istrat7%" = 1,
+  "%istrat8%" = 6,
   "%iblt%" = 0, "%icbt%" = 0, "%ibxc%" = 0,
   "%sblt%" = powerGRIDISI$blt[i],
   "%scbt%" = powerGRIDISI$cbt[i],
@@ -208,34 +232,34 @@ saveRDS(isipower, file = "isipower.RDS", compress = "xz")
 }
 
 powerGRIDISI[, ResidualVariance := factor(resvar, levels = sort(unique(resvar)),
-                                          labels = c("Matching SleepWell", "SleepWell + 20%"))]
+                                          labels = c("Matching SleepWell", "SleepWell + 10%"))]
 powerGRIDISI[, InterceptVariance := factor(intvar, levels = sort(unique(intvar)),
                                            labels = c(
                                              "Intercept Variance\nMatching SleepWell",
-                                             "Intercept Variance\nSleepWell + 20%"))]
+                                             "Intercept Variance\nSleepWell + 10%"))]
 powerGRIDISI[, CBT := factor(cbt, levels = c(-4, -3),
                              labels = c(
                                "CBT Simple Effect\n(High, -4 ISI)",
                                "CBT Simple Effect\n(MID, -3 ISI)"))]
-powerGRIDISI[, InteractionEffect := factor(bxc, levels = c(0, 1, 3),
-                                     labels = c("BLT x CBT (None, 0 ISI)",
-                                                "BLT x CBT (Low, +1 ISI)",
-                                                "BLT x CBT (MID, +3 ISI)"))]
+powerGRIDISI[, InteractionEffect := factor(bxc, levels = c(-3, 0, 3),
+                                     labels = c("BLT x CBT (Neg, -3 ISI)",
+                                                "BLT x CBT (None, +0 ISI)",
+                                                "BLT x CBT (Pos, +3 ISI)"))]
 
 powerGRIDISI$powerSBLT <- unlist(lapply(isipower, function(m) {
-  m$Model$results$parameters$unstandardized[13, "pct_sig_coef"]
+  m$Model$results$parameters$unstandardized[17, "pct_sig_coef"]
 }))
 powerGRIDISI$powerSCBT <- unlist(lapply(isipower, function(m) {
-  m$Model$results$parameters$unstandardized[14, "pct_sig_coef"]
+  m$Model$results$parameters$unstandardized[18, "pct_sig_coef"]
 }))
 powerGRIDISI$powerSBXC <- unlist(lapply(isipower, function(m) {
-  m$Model$results$parameters$unstandardized[15, "pct_sig_coef"]
+  m$Model$results$parameters$unstandardized[19, "pct_sig_coef"]
 }))
 powerGRIDISI$powerMBLT <- unlist(lapply(isipower, function(m) {
-  m$Model$results$parameters$unstandardized[31, "pct_sig_coef"]
+  m$Model$results$parameters$unstandardized[35, "pct_sig_coef"]
 }))
 powerGRIDISI$powerMCBT <- unlist(lapply(isipower, function(m) {
-  m$Model$results$parameters$unstandardized[32, "pct_sig_coef"]
+  m$Model$results$parameters$unstandardized[36, "pct_sig_coef"]
 }))
 
 
@@ -258,13 +282,13 @@ powerISIPlot <- function(y = "", Title = "", data = powerGRIDISI) {
                        labels = paste0(seq(0, 100, by = 10), "%")) +
     scale_colour_manual(values = c(
                           "Matching SleepWell" = "black",
-                          "SleepWell + 20%" = "grey60")) +
+                          "SleepWell + 10%" = "grey60")) +
     scale_linetype_manual(values = c(
-                            "BLT x CBT (None, 0 ISI)" = 1,
-                            "BLT x CBT (Low, +1 ISI)" = 2,
-                            "BLT x CBT (MID, +3 ISI)" = 3)) +
+                            "BLT x CBT (Neg, -3 ISI)" = 1,
+                            "BLT x CBT (None, +0 ISI)" = 2,
+                            "BLT x CBT (Pos, +3 ISI)" = 3)) +
     geom_hline(yintercept = .8) +
-    geom_vline(xintercept = c(220)) +
+    geom_vline(xintercept = c(210)) +
     facet_grid(CBT ~ InterceptVariance, scale = "free_y") +
     ggtitle(label = Title,
             subtitle = paste(
@@ -283,7 +307,7 @@ powerISIPlot("powerSBXC", Title = "Power for the BLT x CBT Interaction on ISI")
 
 
 ggplot(powerGRIDISI, aes(NUM, powerMBLT, linetype = ResidualVariance,
-                         colour = Interaction)) +
+                         colour = InteractionEffect)) +
   stat_smooth(se=FALSE, method = "loess") +
   geom_hline(yintercept = .8) +
   geom_vline(xintercept = c(220)) +
@@ -347,35 +371,51 @@ coef(mfafit)
 
 powerGRIDFA <- as.data.table(expand.grid(
   NUM = seq(from = 100, to = 300, by = 10),
-  resvar = round(mean(c(9.2, 34.8, 21.9)) * c(1, 1.2), 1),
-  intvar = round(28.7 * c(1, 1.2), 1),
+  resvar = round(mean(c(9.2, 34.8, 21.9)) * c(1, 1.1), 1),
+  intvar = round(28.7 * c(1, 1.1), 1),
   blt = c(-5.2 - -.2, -4.2 - -.2),
   cbt = c(-4.2 - -.2),
-  bxc = c(0, +2, +4)))
+  bxc = c(-4, 0, +4)))
 
 table(rowSums(powerGRIDFA[,.(blt, cbt, bxc)]))
 table(rowSums(powerGRIDFA[,.(blt, cbt, bxc)])-.2)
 
-## STRATA info
-## BC - low ISI
-## CC - low ISI
-## BC - high ISI
-## CC - high ISI
-## assume 60 v 40 split on BC vs CC
+#### STRATA info
+## 1: PM - 1to3 - low ISI
+## 2: PM - 1to3 - High ISI
+## 3: PM -   4  - low ISI
+## 4: PM -   4  - High ISI
+## 5: MH - 1to3 - low ISI
+## 6: MH - 1to3 - High ISI
+## 7: MH -   4  - low ISI
+## 8: MH -   4  - High ISI
+
+## assume 60 v 40 split on PM vs MH
 ## assume a 75 v 25 split on high v low ISI
+## assume a 75 v 25 split on 1to3 v 4 (cancer stage)
 ## use this to calculate probability in each strata
 
 if (FALSE) {
   fapower <- lapply(1:nrow(powerGRIDFA), function(i) {
     SleepCare_MonteCarlo(swap = c(
-                           "%nobs" = powerGRIDFA$NUM[i], "%nreps%" = 200,
+                           "%nobs" = powerGRIDFA$NUM[i], "%nreps%" = 500,
                            "%y1miss%" = 0, "%y2miss%" = .25, "%y3miss%" = .35,
-                           "%strat2cut%" = round(qlogis(.4 * .25, lower.tail=FALSE), 3),
-                           "%strat3cut%" = round(qlogis(.6 * .75, lower.tail=FALSE), 3),
-                           "%strat4cut%" = round(qlogis(.4 * .75, lower.tail=FALSE), 3),
+                           "%strat2cut%" = round(qlogis(.6 * .75 * .25, lower.tail=FALSE), 3),
+                           "%strat3cut%" = round(qlogis(.6 * .25 * .75, lower.tail=FALSE), 3),
+                           "%strat4cut%" = round(qlogis(.6 * .25 * .25, lower.tail=FALSE), 3),
+                           "%strat5cut%" = round(qlogis(.4 * .75 * .75, lower.tail=FALSE), 3),
+                           "%strat6cut%" = round(qlogis(.4 * .75 * .25, lower.tail=FALSE), 3),
+                           "%strat7cut%" = round(qlogis(.4 * .25 * .75, lower.tail=FALSE), 3),
+                           "%strat8cut%" = round(qlogis(.4 * .25 * .25, lower.tail=FALSE), 3),
                            "%y1m%" = 0, "%y2m%" = 0, "%y3m%" = 0,
                            "%resvar%" = powerGRIDFA$resvar[i],
-                           "%istrat2%" = 1.5, "%istrat3%" = 9.0, "%istrat4%" = 7.5,
+                           "%istrat2%" = 2,
+                           "%istrat3%" = 4,
+                           "%istrat4%" = 6,
+                           "%istrat5%" = 0,
+                           "%istrat6%" = 2,
+                           "%istrat7%" = 4,
+                           "%istrat8%" = 6,
                            "%iblt%" = 0, "%icbt%" = 0, "%ibxc%" = 0,
                            "%sblt%" = powerGRIDFA$blt[i],
                            "%scbt%" = powerGRIDFA$cbt[i],
@@ -390,33 +430,33 @@ if (FALSE) {
 }
 
 powerGRIDFA[, ResidualVariance := factor(resvar, levels = sort(unique(resvar)),
-                                          labels = c("Matching SleepWell", "SleepWell + 20%"))]
+                                          labels = c("Matching SleepWell", "SleepWell + 10%"))]
 powerGRIDFA[, InterceptVariance := factor(intvar, levels = sort(unique(intvar)),
                                           labels = c("Intercept Variance\nMatching SleepWell",
-                                                     "Intercept Variance\nSleepWell + 20%"))]
+                                                     "Intercept Variance\nSleepWell + 10%"))]
 powerGRIDFA[, BLT := factor(blt, levels = c(-5, -4),
                             labels = c(
                               "BLT Simple Effect\n(High, -5 Fatigue)",
                               "BLT Simple Effect\n(MID, -4 Fatigue)"))]
-powerGRIDFA[, InteractionEffect := factor(bxc, levels = c(0, 2, 4),
-                                     labels = c("BLT x CBT (None, 0 Fatigue)",
-                                                "BLT x CBT (Low, +2 Fatigue)",
-                                                "BLT x CBT (MID, +4 Fatigue)"))]
+powerGRIDFA[, InteractionEffect := factor(bxc, levels = c(-4, 0, 4),
+                                     labels = c("BLT x CBT (Neg, -4 Fatigue)",
+                                                "BLT x CBT (None, +0 Fatigue)",
+                                                "BLT x CBT (Pos, +4 Fatigue)"))]
 
 powerGRIDFA$powerSBLT <- unlist(lapply(fapower, function(m) {
-  m$Model$results$parameters$unstandardized[13, "pct_sig_coef"]
+  m$Model$results$parameters$unstandardized[17, "pct_sig_coef"]
 }))
 powerGRIDFA$powerSCBT <- unlist(lapply(fapower, function(m) {
-  m$Model$results$parameters$unstandardized[14, "pct_sig_coef"]
+  m$Model$results$parameters$unstandardized[18, "pct_sig_coef"]
 }))
 powerGRIDFA$powerSBXC <- unlist(lapply(fapower, function(m) {
-  m$Model$results$parameters$unstandardized[15, "pct_sig_coef"]
+  m$Model$results$parameters$unstandardized[19, "pct_sig_coef"]
 }))
 powerGRIDFA$powerMBLT <- unlist(lapply(fapower, function(m) {
-  m$Model$results$parameters$unstandardized[31, "pct_sig_coef"]
+  m$Model$results$parameters$unstandardized[35, "pct_sig_coef"]
 }))
 powerGRIDFA$powerMCBT <- unlist(lapply(fapower, function(m) {
-  m$Model$results$parameters$unstandardized[32, "pct_sig_coef"]
+  m$Model$results$parameters$unstandardized[36, "pct_sig_coef"]
 }))
 
 powerFAPlot <- function(y = "", Title = "", data = powerGRIDFA) {
@@ -431,13 +471,13 @@ powerFAPlot <- function(y = "", Title = "", data = powerGRIDFA) {
                        labels = paste0(seq(0, 100, by = 10), "%")) +
     scale_colour_manual(values = c(
                           "Matching SleepWell" = "black",
-                          "SleepWell + 20%" = "grey60")) +
+                          "SleepWell + 10%" = "grey60")) +
     scale_linetype_manual(values = c(
-                            "BLT x CBT (None, 0 Fatigue)" = 1,
-                            "BLT x CBT (Low, +2 Fatigue)" = 2,
-                            "BLT x CBT (MID, +4 Fatigue)" = 3)) +
+                            "BLT x CBT (Neg, -4 Fatigue)" = 1,
+                            "BLT x CBT (None, +0 Fatigue)" = 2,
+                            "BLT x CBT (Pos, +4 Fatigue)" = 3)) +
     geom_hline(yintercept = .8) +
-    geom_vline(xintercept = c(220)) +
+    geom_vline(xintercept = c(210)) +
     facet_grid(BLT ~ InterceptVariance, scale = "free_y") +
     ggtitle(label = Title,
             subtitle = paste(

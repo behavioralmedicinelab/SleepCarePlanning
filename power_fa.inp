@@ -1,7 +1,7 @@
 TITLE:
 Estimates for Power Analysis
 DATA:
-FILE = "power_fa_d6cca071f98372ccc163ad43843420e2.dat";
+FILE = "power_fa_98c62984026b0c30ea22f3664bce0a24.dat";
  
 VARIABLE:
 NAMES = FA1 FA2 FA3 dstrat2 dstrat3 dstrat4 dcond; 
